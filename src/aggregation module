@@ -1,0 +1,41 @@
+import sys
+import csv
+import json
+
+raplines={}
+lineNumber=0
+with open('aggregation_output.csv', 'rU') as infile:
+  # read the file as a dictionary for each row ({header : value})
+  reader = csv.DictReader(infile)
+  data = {}
+  for row in reader:
+    for header, value in row.items():
+      try:
+        data[header].append(value)
+      except KeyError:
+        data[header] = [value]
+  for header in data:
+  	if "line" in header:
+  	  raplines[header]=data[header]
+  for header in raplines:
+ 	  try:
+ 	  	linenumber = filter(str.isdigit, header)
+ 	  except IndexError:
+ 	  	linenumber=0;
+
+linenumberPlusOne=int(linenumber)+1	
+output = csv.writer(open('aggregation-input-r'+str(linenumberPlusOne)+'.csv', 'w'))
+headers = ['rap_theme', 'description']
+headers.append("line"+linenumber)
+output.writerow(headers)
+
+for key in raplines:
+	for line in raplines[key]:
+	  rap_theme=data['rap_theme'][0]
+	  description=data['description'][0]
+	  row=[rap_theme,description,line]
+	  output.writerow(row)
+
+
+
+
