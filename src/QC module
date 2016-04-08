@@ -1,0 +1,34 @@
+import csv
+
+if __name__ == '__main__' : 
+    # Create lists for desired objects
+    worker_ids = [];
+    gold_answers = [];
+    answers = [];
+    urls = [];
+
+    with open('QC_input.csv', 'rb') as full:
+        # Create reader object for the quality control input
+        reader = csv.reader(full)
+        
+        # Vote count default is 0
+        votes = 0
+        rap = ''
+
+        # Load into lists the desired information
+        for row in reader:
+            try:
+                current_vote = int(row[1])
+                if current_vote > votes:
+                    # Tracks winning rap and the vote count of winning rap
+                    votes = current_vote
+                    rap = row[0]
+            except:
+                continue
+            
+
+    csvFile = open('qc_code_out.csv', 'w')
+    csvWriter = csv.writer(csvFile)
+    csvWriter.writerow(['winning_line'])
+    csvWriter.writerow([rap])
+    csvFile.close()            
