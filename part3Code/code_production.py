@@ -3,8 +3,6 @@ code_production.py
 
 Provides a user with a rap theme and previously finalized rap lines, and then asks a user to enter in the lines.
 
-CHANGE FILENAME IF ON A DIFFERENT MACHINE
-
 CHANGE # OF JUDGEMENTS FOR FUTURE
 
 LAUNCHED INTERNALLY
@@ -33,10 +31,10 @@ def _find_job():
 
 def create():
     #filename = os.path.join(crowdflower.root, 'examples', 'spam.txt')
-    filename = '/Users/TDPeterson/Dropbox/nets213/FINAL/proto_in.tsv'
+    #filename = '/Users/TDPeterson/Dropbox/nets213/FINAL/proto_in.tsv'
 
     def iter_data():
-        for i, line in enumerate(open(filename), 1):
+        for i, line in enumerate(open('proto_in.tsv'), 1):
             if i != 1:
                 title, description, previous = line.strip().split('\t')
                 yield {'title': title, 'description': description, 'previous': previous}
