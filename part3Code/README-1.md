@@ -6,5 +6,5 @@ This HIT then outputs a TSV file with 5 columns: rap theme, description, previou
 
 QC_code.py then takes this CSV containing vote numbers as an input, and determines the line with the greatest number of “yes” votes. The code then permanently appends that line to the previous lines of the rap containing that title and description. The resulting file/output is a TSV with the title, description, and updated current/previous lines. This output is then fed back into code_production.py and the process repeats. 
 
-Proto_run is a bash file that automates the process of running our commands on the terminal.
+Bash.yaml is a bash file that automates the process of running our commands on the terminal.
 
