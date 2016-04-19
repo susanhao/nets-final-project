@@ -1,0 +1,27 @@
+#!/bin/bash
+
+(( i++ ))
+while [[ $i -lt 3 ]] ; do
+    echo "ITERATION $i"
+    python code_production.py create
+    python code_production.py launch
+    COUNTER=$((python code_production.py ping) 2>&1)
+        until [[ $COUNTER -lt 1 ]] ; do
+            echo Production judgments remainin: $COUNTER
+            COUNTER=$((python code_production.py ping) 2>&1)
+        done
+    python code_production.py results
+    python code_production.py delete
+    python code_voting.py create
+    python code_voting.py launch
+    COUNTER=$((python code_voting.py ping) 2>&1)
+        until [[ $COUNTER -lt 1 ]] ; do
+            echo Voting judgments remaining are $COUNTER
+            COUNTER=$((python code_voting.py ping) 2>&1)
+        done
+    python code_voting.py results
+    python code_voting.py delete
+    python votes_to_counts.py
+    python QC_code.py
+    (( i++ ))
+done
