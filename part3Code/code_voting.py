@@ -3,8 +3,6 @@ code_voting.py
 
 Provides a user with a rap theme and previously finalized rap lines, and then asks a user to vote on the lines
 
-CHANGE FILENAME IF ON A DIFFERENT MACHINE
-
 CHANGE # OF JUDGEMENTS FOR FUTURE
 
 LAUNCHED INTERNALLY
@@ -32,10 +30,10 @@ def _find_job():
 
 def create():
     #filename = os.path.join(crowdflower.root, 'examples', 'spam.txt')
-    filename = '/Users/TDPeterson/Dropbox/nets213/FINAL/produce_line_output.tsv'
+    #filename = '/Users/TDPeterson/Dropbox/nets213/FINAL/produce_line_output.tsv'
 
     def iter_data():
-        for i, line in enumerate(open(filename), 1):
+        for i, line in enumerate(open('produce_line_output.tsv'), 1):
             if i != 1:
                 title, description, previous_lines, possible_lines = line.strip().split('\t')
                 yield {'rap_theme': title, 'description': description, 'previous_lines':previous_lines, 'possible_lines': possible_lines}
