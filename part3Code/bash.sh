@@ -8,7 +8,7 @@ while [[ $i -lt 10 ]] ; do
     COUNTER=$((python code_production.py ping) 2>&1)
         until [[ $COUNTER -lt 1 ]]
         do
-            echo Production judgments remaining are $COUNTER
+            echo Production judgments remainin: $COUNTER
             COUNTER=$((python code_production.py ping) 2>&1)
         done
     python code_production.py results
@@ -27,4 +27,3 @@ while [[ $i -lt 10 ]] ; do
     python QC_code.py
     (( i++ ))
 done
-
