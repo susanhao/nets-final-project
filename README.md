@@ -9,6 +9,6 @@ The quality control module, the aggregation module, and corresponding README can
 The CrowdFlowerAPI folder has the CrowdFlower API.
 
 The part3code has the the logo and codes needed for part 3 including the quality control module, the code production module,
-the code voting module, and the votes to count module.
+the code voting module, the bash commands, and the votes to count module.
 
 
