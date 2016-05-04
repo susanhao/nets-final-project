@@ -50,7 +50,7 @@ def create():
         'max_judgments_per_worker': 1,
         'units_per_assignment': 1,
         'judgments_per_unit': 10,
-        'payment_cents': 1,
+        'payment_cents': 5,
         'instructions': '''
 <h1>Overview: &nbsp;</h1>
 
@@ -83,6 +83,7 @@ def create():
 			<li>Keep your response it short</li>
 			<li>Keep your response (somewhat) relevant to the topic and/or description</li>
 			<li>Use the current lines to inspire your new rap line.</li>
+			<li><u>Please do not copy any of the current lines. We want this rap to be good!!!</u></li>            
 		</ol>
 	</li>
 </ol>
@@ -164,29 +165,47 @@ def create():
 
 def launch():
     job = _find_job()
-    job.launch(1, channels=['cf_internal'])
+    job.launch(1)#, channels=['cf_internal'])
     print 'Temporary Sleep for Production Task to Launch'
-    time.sleep(60)
+    time.sleep(2)
     print >> sys.stderr, 'Launched Job[%d]' % job.id
 
+def check():
+    job = _find_job()
+    complete = job.properties["completed"]
+    while complete == False:
+        print 'Production: Incomplete'
+        print 'Judgments remaining: %d' % job.ping()["needed_judgments"]
+        time.sleep(300)
+        job = _find_job()
+        complete = job.properties["completed"]
+    print "Production: complete!"
 
 def ping():
     job = _find_job()
-    pinged = job.ping()
-    print pinged["needed_judgments"]
+    print "Five Minute Ping Pause: production"
+    #time.sleep(300)
+    #print job.ping()["needed_judgments"]
+    print job.properties["completed"]
+    #print job.id
+    #print pinged["needed_judgments"]
     #print >> sys.stderr, 'Needed Judgements Remaining: %d' % pinged["needed_judgments"]
 
 
 def results():
     job = _find_job()
+    time.sleep(30)
     try:
         with open('produce_line_output.tsv', 'wb') as f:
             output = csv.writer(f, delimiter='\t')
             headers = ['rap_theme', 'description', 'previous_lines', 'possible_lines']
             output.writerow(headers)
             for judgment in job.judgments:
-                row=[judgment['title'], judgment['description'], judgment['previous'], judgment['next_line']]
-                output.writerow(row)
+                try:
+                    row=[judgment['title'], judgment['description'], judgment['previous'], judgment['next_line']]    
+                    output.writerow(row)
+                except:
+                    continue
     except CrowdFlowerError, exc:
         # explain HTTP 202 Accepted response
         if exc.response.status_code == 202:
@@ -201,6 +220,10 @@ def download():
 
 def delete():
     job = _find_job()
+    print >> sys.stderr, 'Cancelling Job[%d]' % job.id
+    job.cancel()
+    print 'Temporary Sleep for Voting Task Cancellation'
+    time.sleep(5)
     print >> sys.stderr, 'Deleting Job[%d]' % job.id
     job.delete()
 
