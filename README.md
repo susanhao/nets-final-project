@@ -13,4 +13,6 @@ the code voting module, the bash commands, and the votes to count module.
 
 The part4analysis folder has the code for generating the contributions figure, the figure itself, and the preliminary analysis of our data as well as our data in an excel sheet .
 
+The final_project folder has the pictures of final aggregated graph, the html script for the graph, and the screenshots of our interface of what our users see.
+
 
