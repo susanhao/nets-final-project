@@ -15,6 +15,7 @@ import json
 import random
 import crowdflower
 import csv
+import time
 from crowdflower.exception import CrowdFlowerError
 
 # expects api key to be available in your environment variables; does not use cache
@@ -46,10 +47,10 @@ def create():
 
     job.update({
         'title': 'Pick the best line for a rap!',
-        'max_judgments_per_worker': 1,
+        'max_judgments_per_worker': 10,
         'units_per_assignment': 10,
-        'judgments_per_unit': 9,
-        'payment_cents': 1,
+        'judgments_per_unit': 13,
+        'payment_cents': 5,
         'instructions': '''
 <h1>Overview: &nbsp;</h1>
 
@@ -64,7 +65,7 @@ def create():
 <ol>
 	<li>Read the "Rap Title" , "Description", &nbsp;and "Current Lines"</li>
 	<li>Think about a creative next line for this rap that relates to the title, description, and lines already written.</li>
-	<li>For each possible line, indicate if they should be added or not.</li>
+	<li>For each possible line, indicate if it should be added or not to the Current Lines.</li>
 </ol>
 <hr>
 
@@ -72,8 +73,9 @@ def create():
 
 <ol>
 	<br>
-	<li>Think about what makes a good rap. Vote for the line that 'flows' the best, but is also your favorite...<u>the best line might be part of a class presentation!</u></li>
-	<li>If "Current Lines" says N/A, then just pick your favorite line that is also most reflective of the "Rap Title" and/or "Description"</li>
+	<li>Think about what makes a good rap. Vote for the line that 'flows' the best <u>with the current lines</u>, but is also your favorite...<u>the best line might be part of a class presentation!</u></li>
+	<li>If "Current Lines" says N/A, then just pick your favorite line that is based on the "Rap Title" and/or "Description"</li>
+	<li><u>Vote no if the line is already in the current lines</u></li>    
 </ol>
 
 <p>THANKS EVERYONE!! :D :D :D</p>
@@ -97,13 +99,13 @@ def create():
     <font size = "4">Possible Line:</font> <ul><font size = "6"><strong><u>{{possible_lines}}</u></strong></font></ul>
 <br/>
 <br/>
-<cml:radios label="Should this line be added to the above rap?" validates="required" gold="true">
+<cml:radios label="Should the Possible line be added to the above Current Lines of the rap?" validates="required" gold="true">
   <cml:radio label="yes" value="yes" />
   <cml:radio label="no" value="no" />
 </cml:radios>
         ''',
         'options': {
-            'front_load': 1, # quiz mode = 1; turn off with 0
+            'front_load': 0, # quiz mode = 1; turn off with 0
         }
     })
     print >> sys.stderr, 'Updated job'
@@ -114,26 +116,39 @@ def create():
 
 def launch():
     job = _find_job()
-    job.launch(10, channels=['cf_internal'])
+    job.launch(10)
     print 'Temporary Sleep for Voting Task to Launch'
-    time.sleep(60)
+    time.sleep(2)
     print >> sys.stderr, 'Launched Job[%d]' % job.id
 
 def ping():
     job = _find_job()
-    pinged = job.ping()
-    print pinged["needed_judgments"]
+    time.sleep(300)
+    print job.properties["completed"]
     #print >> sys.stderr, 'Needed Judgements Remaining: %d' % pinged["needed_judgments"]
+    
+def check():
+    job = _find_job()
+    complete = job.properties["completed"]
+    while complete == False:
+        print 'Voting: Incomplete'
+        print 'Judgments remaining: %d' % job.ping()["needed_judgments"]
+        time.sleep(300)
+        job = _find_job()
+        complete = job.properties["completed"]
+    print "Voting: complete!"
+    
 
 def results():
     job = _find_job()
+    time.sleep(30)
     try:
         with open('produce_vote_output.csv', 'wb') as f:   # formerly tsv
             output = csv.writer(f) # CHANGE, used to have the delimiter = '\t'
             headers = ['rap_theme','description', 'previous_lines', 'possible_lines', 'should_this_line_be_added_to_the_above_rap']
             output.writerow(headers)
             for judgment in job.judgments:
-                row=[judgment['rap_theme'], judgment['description'], judgment['previous_lines'], judgment['possible_lines'], judgment['should_this_line_be_added_to_the_above_rap']]
+                row=[judgment['rap_theme'], judgment['description'], judgment['previous_lines'], judgment['possible_lines'], judgment['should_the_possible_line_be_added_to_the_above_current_lines_of_the_rap']]
                 output.writerow(row)
     except CrowdFlowerError, exc:
         # explain HTTP 202 Accepted response
@@ -149,6 +164,10 @@ def download():
 
 def delete():
     job = _find_job()
+    print >> sys.stderr, 'Cancelling Job[%d]' % job.id
+    job.cancel()
+    print 'Temporary Sleep for Voting Task Cancellation'
+    time.sleep(5)
     print >> sys.stderr, 'Deleting Job[%d]' % job.id
     job.delete()
 
