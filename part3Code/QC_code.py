@@ -47,7 +47,7 @@ if __name__ == '__main__' :
             previous_lines = line[2]
         
     # Update the lines
-    if (previous_lines == 'N/A'):
+    if (previous_lines.strip() == 'N/A'):
         previous_lines = rap
     else:
         previous_lines = previous_lines + '; ' + rap
@@ -59,3 +59,4 @@ if __name__ == '__main__' :
         output.writerow(headers)
         row=[theme, description, previous_lines]
         output.writerow(row)
+    print rap
