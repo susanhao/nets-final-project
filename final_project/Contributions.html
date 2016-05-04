@@ -1,0 +1,42 @@
+<head>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load("current", {packages:['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = google.visualization.arrayToDataTable([
+        ["Number of Contributions", "Number of Users", { role: "style" } ],
+        ["1", 62, "red"],
+        ["2", 5, "blue"],
+        ["3", 3, "green"],
+        ["4", 0, "green"],
+        ["5", 0, "gold"],
+        ["6", 1, "cyan"]
+      ]);
+ 
+ var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+      var options = {
+        title: "Number of Users by Contributions",
+        width: 600,
+        height: 400,
+        hAxis: {
+          title: 'Number of Contributions',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Number of Users'
+        },
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+      chart.draw(view, options);
+  }
+  </script>
+<div id="columnchart_values" style="width: 900px; height: 300px;"></div>
